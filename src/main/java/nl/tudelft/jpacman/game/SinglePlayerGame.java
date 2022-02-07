@@ -44,6 +44,8 @@ public class SinglePlayerGame extends Game {
         this.player = player;
         this.level = level;
         this.level.registerPlayer(player);
+        this.level.initInitalPositionUnit();
+
     }
 
     @Override

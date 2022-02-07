@@ -14,10 +14,13 @@ import nl.tudelft.jpacman.sprite.Sprite;
  */
 public class Player extends Unit {
 
+    private String id; 
     /**
      * The amount of points accumulated by this player.
      */
     private int score;
+
+    private int lives;
 
     /**
      * The animations for every direction.
@@ -50,9 +53,11 @@ public class Player extends Unit {
     protected Player(Map<Direction, Sprite> spriteMap, AnimatedSprite deathAnimation) {
         this.score = 0;
         this.alive = true;
+        this.lives = 3;
         this.sprites = spriteMap;
         this.deathSprite = deathAnimation;
         deathSprite.setAnimating(false);
+        this.id = java.util.UUID.randomUUID().toString();
     }
 
     /**
@@ -76,11 +81,14 @@ public class Player extends Unit {
         if (isAlive) {
             deathSprite.setAnimating(false);
             this.killer = null;
+            this.alive = true;
         }
         if (!isAlive) {
+            lives--;
             deathSprite.restart();
-        }
-        this.alive = isAlive;
+            this.alive = lives != 0;
+        }        
+      
     }
 
     /**
@@ -98,7 +106,7 @@ public class Player extends Unit {
      * @param killer is set if collision with ghost happens.
      */
     public void setKiller(Unit killer) {
-        this.killer =  killer;
+        this.killer = killer;
     }
 
     /**
@@ -109,6 +117,20 @@ public class Player extends Unit {
     public int getScore() {
         return score;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Returns the amount of lives left by this player.
+     *
+     * @return The amount of lives left by this player.
+     */
+    public int getLives() {
+        return lives;
+    }
+
 
     @Override
     public Sprite getSprite() {

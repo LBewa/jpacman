@@ -16,7 +16,6 @@ import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.board.Unit;
 import nl.tudelft.jpacman.npc.Ghost;
-
 /**
  * A level of Pac-Man. A level consists of the board with the players and the
  * AIs on it.
@@ -30,6 +29,7 @@ public class Level {
      * The board of this level.
      */
     private final Board board;
+    private Map<String, Square> initalPositionUnit;
 
     /**
      * The lock that ensures moves are executed sequential.
@@ -187,7 +187,14 @@ public class Level {
                 List<Unit> occupants = destination.getOccupants();
                 unit.occupy(destination);
                 for (Unit occupant : occupants) {
-                    collisions.collide(unit, occupant);
+                    collisions.collide(unit, occupant);   
+
+                    if ((unit instanceof Player || occupant instanceof Player) &&
+                        (unit instanceof Ghost || occupant instanceof Ghost )) {
+                        //Collision Player <=> Ghost 
+                        checkResetNPCPosition();
+                        break;
+                    }                
                 }
             }
             updateObservers();
@@ -246,6 +253,33 @@ public class Level {
             ScheduledExecutorService schedule = entry.getValue();
             assert schedule != null;
             schedule.shutdownNow();
+        }
+    }
+
+    private void checkResetNPCPosition() {
+        if(this.players.stream().filter(x -> x.isAlive()) .count() == 0)
+            return;
+           
+        for (Player p : this.players) {          
+            p.leaveSquare();
+            p.occupy( this.initalPositionUnit.get(p.getId()));         
+        }
+        for (Entry<Ghost, ScheduledExecutorService> entry : npcs.entrySet()) {
+            Ghost g = entry.getKey();
+            g.leaveSquare();
+            g.occupy( this.initalPositionUnit.get(g.getId()));         
+        }
+    }
+
+    public void initInitalPositionUnit(){
+        this.initalPositionUnit = new HashMap<>();
+
+        for (Player p : this.players) {
+            this.initalPositionUnit.put(p.getId(), p.getSquare());            
+        }
+        for (Entry<Ghost, ScheduledExecutorService> entry : npcs.entrySet()) {
+            Ghost g = entry.getKey();
+            this.initalPositionUnit.put(g.getId(), g.getSquare());            
         }
     }
 

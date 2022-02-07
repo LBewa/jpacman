@@ -32,6 +32,8 @@ public abstract class Ghost extends Unit {
      */
     private final int intervalVariation;
 
+    private final String id;
+
     /**
      * Calculates the next move for this unit and returns the direction to move
      * in.
@@ -64,11 +66,17 @@ public abstract class Ghost extends Unit {
         this.sprites = spriteMap;
         this.intervalVariation = intervalVariation;
         this.moveInterval = moveInterval;
+        this.id = java.util.UUID.randomUUID().toString();
+
     }
 
     @Override
     public Sprite getSprite() {
         return sprites.get(getDirection());
+    }
+
+    public String getId() {
+        return id;
     }
 
     /**
