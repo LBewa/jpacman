@@ -1,11 +1,10 @@
 package nl.tudelft.jpacman.game;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nl.tudelft.jpacman.level.Level;
 import nl.tudelft.jpacman.level.Player;
-
-import com.google.common.collect.ImmutableList;
 import nl.tudelft.jpacman.points.PointCalculator;
 
 /**
@@ -50,7 +49,9 @@ public class SinglePlayerGame extends Game {
 
     @Override
     public List<Player> getPlayers() {
-        return ImmutableList.of(player);
+        List<Player> lst = new ArrayList<>();
+        lst.add(player);
+        return lst;
     }
 
     @Override

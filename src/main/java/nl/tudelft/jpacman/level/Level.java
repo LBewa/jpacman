@@ -92,9 +92,9 @@ public class Level {
      */
     public Level(Board board, List<Ghost> ghosts, List<Square> startPositions,
                  CollisionMap collisionMap) {
-        assert board != null;
-        assert ghosts != null;
-        assert startPositions != null;
+        
+        if(board == null || ghosts == null  || startPositions == null)
+            throw new IllegalArgumentException();
 
         this.board = board;
         this.inProgress = false;
@@ -138,8 +138,9 @@ public class Level {
      *            The player to register.
      */
     public void registerPlayer(Player player) {
-        assert player != null;
-        assert !startSquares.isEmpty();
+
+        if(player == null || startSquares.isEmpty())
+            throw new IllegalArgumentException();
 
         if (players.contains(player)) {
             return;
@@ -170,9 +171,9 @@ public class Level {
      *            The direction to move the unit in.
      */
     public void move(Unit unit, Direction direction) {
-        assert unit != null;
-        assert direction != null;
-        assert unit.hasSquare();
+
+        if(unit == null || direction == null  || !unit.hasSquare())
+            throw new IllegalArgumentException();
 
         if (!isInProgress()) {
             return;
@@ -251,13 +252,14 @@ public class Level {
     private void stopNPCs() {
         for (Entry<Ghost, ScheduledExecutorService> entry : npcs.entrySet()) {
             ScheduledExecutorService schedule = entry.getValue();
-            assert schedule != null;
+            if(schedule == null)
+                throw new IllegalArgumentException();
             schedule.shutdownNow();
         }
     }
 
     private void checkResetNPCPosition() {
-        if(this.players.stream().filter(x -> x.isAlive()) .count() == 0)
+        if(this.players.stream().filter(Player::isAlive) .count() == 0)
             return;
            
         for (Player p : this.players) {          
@@ -342,7 +344,8 @@ public class Level {
                 }
             }
         }
-        assert pellets >= 0;
+        if(pellets < 0)
+            throw new IllegalArgumentException();
         return pellets;
     }
 
